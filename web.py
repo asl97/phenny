@@ -13,8 +13,13 @@ user_agent = "Mozilla/5.0 (compatible; Phenny; +https://github.com/asl97/phenny)
 
 def get(uri, amount=-1):
 	global user_agent
-	r = requests.get(uri, headers={"User-Agent": user_agent})
-	return r.content, r.status_code
+	headers = {"User-Agent": user_agent}
+	if amount > 0:
+		headers['Accept-Encoding'] = None
+	r = requests.get(uri, headers=headers, stream=amount>0)
+	content = r.raw.read(amount) if amount>0 else r.content
+	r.close()
+	return content, r.status_code
 
 def head(uri):
 	global user_agent
