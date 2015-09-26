@@ -5,9 +5,6 @@ Copyright sfan5, 2014
 """
 
 import re
-import urllib
-import urllib.request
-import urllib.parse
 import requests
 import json as jsonlib
 from html.entities import html5 as name2codepoint
@@ -49,5 +46,5 @@ def json(text):
 	return jsonlib.loads(text)
 
 def urlencode(text):
-	return urllib.parse.quote_plus(text)
+	return requests.utils.requote_uri(text)
 
