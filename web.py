@@ -8,48 +8,27 @@ import re
 import urllib
 import urllib.request
 import urllib.parse
+import requests
 import json as jsonlib
 from html.entities import html5 as name2codepoint
 
-user_agent = "Mozilla/5.0 (compatible; Phenny; +https://github.com/sfan5/phenny)"
+user_agent = "Mozilla/5.0 (compatible; Phenny; +https://github.com/asl97/phenny)"
 
 def get(uri, amount=-1):
 	global user_agent
-	req = urllib.request.Request(uri, headers={"User-Agent": user_agent})
-	try:
-		f = urllib.request.urlopen(req, cadefault=True)
-	except urllib.error.HTTPError as e:
-		return b"", e.code
-	if amount > 0:
-		content = f.read(amount)
-	else:
-		content = f.read()
-	f.close()
-	return content, f.status
+	r = requests.get(uri, headers={"User-Agent": user_agent})
+	return r.content, r.status_code
 
 def head(uri):
 	global user_agent
-	req = urllib.request.Request(uri, headers={"User-Agent": user_agent}, method="HEAD")
-	try:
-		f = urllib.request.urlopen(req, cadefault=True)
-	except urllib.error.HTTPError as e:
-		return {}, e.code
-	headers = dict(f.info().items())
-	f.close()
-	return headers, f.status
+	r = requests.head(uri, headers={"User-Agent": user_agent})
+	return r.headers, f.status_code
 
 
 def post(uri, query):
 	global user_agent
-	data = bytes(urllib.parse.urlencode(query), 'ascii')
-	req = urllib.request.Request(uri, data=data, headers={"User-Agent": user_agent})
-	try:
-		f = urllib.request.urlopen(req, cadefault=True)
-	except urllib.error.HTTPError as e:
-		return b"", e.code
-	content = f.read()
-	f.close()
-	return content, f.status
+	r = requests.post(uri, data=query, headers={"User-Agent": user_agent})
+	return r.content, f.status_code
 
 def entity(match):
 	value = match.group(1).lower()
@@ -70,5 +49,4 @@ def json(text):
 	return jsonlib.loads(text)
 
 def urlencode(text):
-	return urllib.parse.urlencode({'a': text})[2:]
-
+	return urllib.parse.quote_plus(text)
