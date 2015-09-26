@@ -26,7 +26,6 @@ def head(uri):
 	r = requests.head(uri, headers={"User-Agent": user_agent})
 	return r.headers, f.status_code
 
-
 def post(uri, query):
 	global user_agent
 	r = requests.post(uri, data=query, headers={"User-Agent": user_agent})
